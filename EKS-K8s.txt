@@ -1,0 +1,53 @@
+Launching an EKS Cluster
+
+1- Create an admin user for the EKS cluster
+    1.1- Add user in IAM
+2- Launch an EC2 instance
+3- Connect to the instance
+    3.1- Update packages:
+        sudo yum update -y
+    3.2- Install zip package:
+        sudo yum install zip -y
+    3.3- Install AWS CLI v2
+        3.3.1- Download AWSCLIv2 package
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        3.3.2- Unzip AWSCLIv2 package
+            unzip awscliv2.zip
+        3.3.3- See where the current AWS CLI is installed
+            which aws
+        3.3.4- Update AWS CLI
+            sudo ./aws/install --bin-dir /usr/bin --install-dir /usr/bin/aws-cli --update
+        3.3.5- Check AWS CLI version
+            aws --version
+    3.4- Configure the CLI
+        aws Configure
+            Note: In "Default output format" enter "json"
+    3.5- Download and install kubectl
+        3.5.1- Download kubectl
+            curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/kubectl
+        3.5.2- Apply execute permissions to the binary
+            chmod +x ./kubectl
+        3.5.3- Copy the binary to the path
+            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+        3.5.4- Ensure kubectl is installed
+            kubectl version --short --client
+    3.6- Download and install eksctl
+        3.6.1- Download eksctl
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+        3.6.2- Move the extracted binary to /usr/bin
+            sudo mv /tmp/eksctl /usr/bin
+        3.6.3- Get eksctl version
+            eksctl version
+        3.6.4- eksctl options
+            eksctl help
+4- Provision and EKS Cluster
+    
+
+
+------------------------------------------------------------
+Provisioning a EKS cluster with 3 worker nodes:
+eksctl create cluster --name petclinic --region us-east-1 --zones us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1f --nodegroup-name petclinic-workers --node-type t3.medium --nodes 3 --nodes-min 1 --nodes-max 4 --managed --tags Project=Kubernetes-PetClinic 
+
+aws eks update-kubeconfig --name petclinic --region us-east-1
+
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 488811952251.dkr.ecr.us-east-1.amazonaws.com/petclinic-image-test

@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+name: spring-petclinic
+labels:
+run: spring-petclinic
+spec:
+selector:
+app: spring-petclinic
+ports:
+- protocol: TCP
+port: 80
+targetPort: 8080
+type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+name: spring-petclinic
+labels:
+app: spring-petclinic
+spec:
+replicas: 2
+selector:
+matchLabels:
+app: spring-petclinic
+template:
+metadata:
+labels:
+app: spring-petclinic
+spec:
+containers:
+- name: spring-petclinic
+image: 942328989920.dkr.ecr.us-east-1.amazonaws.com/petclinic-kubernetes:latest
+ports:
+- containerPort: 8080
+env:
+- name: JAVA_OPTS
+value: "-Dspring.profiles.active=yugabytedb -Dspring.datasource.url=jdbc:postgresql://[host]:[port]/petclinic?load-balance=true -Dspring.datasource.initialization-mode=never"

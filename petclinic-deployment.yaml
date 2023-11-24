@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic-deployment
+  labels:
+    env: petclinic
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      env: petclinic
+  template:
+    metadata:
+      labels:
+        env: petclinic
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
